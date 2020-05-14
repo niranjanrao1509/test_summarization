@@ -1,0 +1,12 @@
+data/*
+logs/*
+Models/*
+result/*
+*.csv
+*.h5
+*.pyc
+.idea
+*.log
+.pytest_cache
+pickles/*
+yml/production/secret/*

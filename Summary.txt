@@ -1,0 +1,60 @@
+﻿Extractive Text Summarization as Text Matching
+
+Typical Extractive summarizers 
+	--> Extract sentences one by one and score them
+	--> Model relationship between sentences, select several sentences to form a summary.
+	--> This modelling does not consider semnatic relationship between sentences. 
+
+Types of Extractive Summarizers:
+a) Sentence Level Summary : 
+	--> Create a set of "Candidate Summaries". Each Candiate summary includes sentences extracted from Document	
+	--> Each sentence in Candidate Summary is scored wrt Golden Summary
+
+b) Summary-Level Summary:
+	--> Score the entire Candidate Summary wrt Golden Summary as a whole. (Not sentence by sentence).
+
+Choosing Sentence level vs Summary level:
+	-> Most of the best-summaries are not made up of the highest-scoring sentences.
+	-> Appearance of Pearl summaries causes problems for sentence level Extractors.
+	-> Sentence Level extractors fall into a local optimization.
+	-> Proportion of the pearl summaries in best-summaries decides choice of Sentence-Level vs Summary-Level.
+
+Conclusion : Summary Level learning performs better in general, as Sentence Level extractors are unaware of Pearl Summaries
+
+Most previous approaches incorporate encoder-decoder RNN architectures which are all sentence level extractors.  individual scoring process favor the highest scoring sentence. (RL for summary level possible). 
+
+This paper uses a summary level framework for Extractive Summarization.
+Approach: extractive summarization as a semantic text matching problem --> Estimate semantic similarity between source and target
+
+Most approaches are extract and select        --> Extract sentence and select based on score.
+This paper approaches it as extract and match --> Extract sentences and match with document based on semantic similarity.
+
+Semantic Text Matching:
+
+Siamese-BERT architecture to compute the similarity between the source document and the candidate summary.
+
+Siamese BERT:
+    -> Consists of 2 BERT modules and Inference Phase.
+	-> Each BERT gives sentence emebeddings for Document and Candidate Summary : rD, rC.
+	-> Cosine-similarity between embeddings is used for Inference.
+
+Similarity score: f(D,C) = cosine(rD,rC). 
+
+Loss is formulated such that,
+	-> Gold summary should have the highest matching score with Candidate Summary -- L1.
+	-> A better candidate summary should obtain a higher score compared with a unqualiﬁed candidate summary -- L2
+Loss = L1 + L2
+
+LOSS: 
+L1 = max(0,f(D,C)−f(D,C∗) + γ1),
+gold summary C∗ should be semantically closest to the source document.
+
+L2 = max(0,f(D,Cj)−f(D,Ci) + (j −i)∗γ2) (i < j)
+S better candidate summary should obtain a higher score 
+
+Candidate Pruning:
+	--> Assign each sentence in the document with a score and prune irrelevant sentences.
+	--> Generate Candidate Summaries as combinations of pruned set of sentences.
+	--> Scoring of sentence is done using a Neural Network.
+
+
